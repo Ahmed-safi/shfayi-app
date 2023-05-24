@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "151402684339",
+    "project_id": "shfayi",
+    "storage_bucket": "shfayi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151402684339:android:9aa469e4e2533c2954f5c6",
+        "android_client_info": {
+          "package_name": "com.example.shifayiy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "151402684339-d2rlos9n6dv1u1qoak6mgqnomk6m43nl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaicw-lVmMO-cjI9c5_-frskpErF-g4rw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "151402684339-d2rlos9n6dv1u1qoak6mgqnomk6m43nl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "151402684339-e90gchmq917t9n6mtn6jdsnb4q6ptjmd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shifayiy"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
