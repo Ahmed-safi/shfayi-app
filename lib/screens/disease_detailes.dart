@@ -28,7 +28,6 @@ class DiseaseDetailes extends StatelessWidget {
         body: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(15),
-            height: MediaQuery.of(context).size.height,
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,

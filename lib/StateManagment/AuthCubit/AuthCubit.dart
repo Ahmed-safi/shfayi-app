@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shifayiy/screens/welcom_screen.dart';
 import '../../screens/authScreens/login.dart';
 import 'AuthStates.dart';
 
@@ -51,6 +52,7 @@ class AuthCubit extends Cubit<AuthStates> {
   }
 
   */
+  var userData = [];
 
   void userRegister(
       {required String email,
@@ -106,48 +108,41 @@ class AuthCubit extends Cubit<AuthStates> {
     required bool isDoctor,
     String? position,
   }) async {
-    if (isDoctor) {
-      await FirebaseFirestore.instance.collection("doctors").doc(uId).set({
-        "email": email,
-        "f_name": f_name,
-        "m_name": m_name,
-        "l_name": l_name,
-        "location": location,
-        "phone": phone,
-        "uId": uId,
-        "position": position
-      }).then((value) {
-        emit(CreateUserSuccessState());
-      }).catchError((error) {
-        print(error.toString());
-        emit(CreateUserErrorState(error.toString()));
-      });
-    } else {
-      await FirebaseFirestore.instance.collection("users").doc(uId).set({
-        "email": email,
-        "f_name": f_name,
-        "m_name": m_name,
-        "l_name": l_name,
-        "location": location,
-        "phone": phone,
-        "uId": uId,
-        "position": position
-      }).then((value) {
-        emit(CreateUserSuccessState());
-      }).catchError((error) {
-        print(error.toString());
-        emit(CreateUserErrorState(error.toString()));
-      });
-    }
+    await FirebaseFirestore.instance.collection("users").doc(uId).set({
+      "email": email,
+      "f_name": f_name,
+      "m_name": m_name,
+      "l_name": l_name,
+      "location": location,
+      "phone": phone,
+      "uId": uId,
+      "position": position,
+      "isDoctor": isDoctor
+    }).then((value) {
+      emit(CreateUserSuccessState());
+    }).catchError((error) {
+      print(error.toString());
+      emit(CreateUserErrorState(error.toString()));
+    });
   }
 
-  void login({email, password}) async {
+  void login({email, password, isDoctor}) async {
     emit(LoginLoadingState());
     try {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password)
-          .then((value) {
-        emit(LoginSuccessState());
+          .then((value) async {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(value.user!.uid)
+            .get()
+            .then((value) {
+          value.data()!["isDoctor"];
+          emit(LoginSuccessState(value.data()!["isDoctor"]));
+        }).catchError((error) {
+          print("=============================");
+          print(error.toString());
+        });
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -162,8 +157,11 @@ class AuthCubit extends Cubit<AuthStates> {
 
   void logout(context) async {
     await FirebaseAuth.instance.signOut().then((value) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const LoginPage()));
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Welcome()),
+        (route) => false,
+      );
     });
     emit(SignOutSuccess());
   }

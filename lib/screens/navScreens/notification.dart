@@ -14,9 +14,12 @@ class Notifications extends StatelessWidget {
       child: Container(
         width: double.infinity,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("آحر الأحداث"),
+            Text(
+              "آحر الأحداث",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             Expanded(
               child: ListView.separated(
                   itemCount: 10,
@@ -30,20 +33,20 @@ class Notifications extends StatelessWidget {
                             borderRadius: BorderRadius.circular(15)),
                         width: double.infinity,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
+                                Icon(
+                                  Icons.notifications_active,
+                                  size: 35,
+                                ),
                                 Column(
                                   children: const [
                                     Text("د. أحمد الخيري"),
-                                    Text("ahmedalkhairy@"),
+                                    Text("   ahmedalkhairy@"),
                                   ],
-                                ),
-                                Icon(
-                                  Icons.notification_important,
-                                  size: 40,
                                 ),
                               ],
                             ),
@@ -54,7 +57,6 @@ class Notifications extends StatelessWidget {
                               padding: const EdgeInsets.only(right: 50),
                               child: Text(
                                 "قام بقبول طلب المراسلة الذي أرسلته, يمكنك الأن إرسال الرسائل ل د.أحمد الخيري بكل سهولة. ",
-                                textAlign: TextAlign.end,
                               ),
                             )
                           ],

@@ -67,7 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '151402684339',
     projectId: 'shfayi',
     storageBucket: 'shfayi.appspot.com',
-    iosClientId: '151402684339-e90gchmq917t9n6mtn6jdsnb4q6ptjmd.apps.googleusercontent.com',
+    iosClientId:
+        '151402684339-e90gchmq917t9n6mtn6jdsnb4q6ptjmd.apps.googleusercontent.com',
     iosBundleId: 'com.example.shifayiy',
   );
 
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '151402684339',
     projectId: 'shfayi',
     storageBucket: 'shfayi.appspot.com',
-    iosClientId: '151402684339-e90gchmq917t9n6mtn6jdsnb4q6ptjmd.apps.googleusercontent.com',
+    iosClientId:
+        '151402684339-e90gchmq917t9n6mtn6jdsnb4q6ptjmd.apps.googleusercontent.com',
     iosBundleId: 'com.example.shifayiy',
   );
 }

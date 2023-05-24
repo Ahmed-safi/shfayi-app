@@ -2,8 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class BoxTools extends StatelessWidget {
+  final first_name;
+  final mid_name;
+  final last_name;
+  final location;
+  final email;
+  final position;
+  final phone;
+
   const BoxTools({
     Key? key,
+    this.first_name,
+    this.mid_name,
+    this.last_name,
+    this.location,
+    this.email,
+    this.position,
+    this.phone,
   }) : super(key: key);
 
   @override
@@ -22,13 +37,13 @@ class BoxTools extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "First Name",
+                    "Name",
                     style: TextStyle(
                         color: HexColor("#717171"),
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
                   ),
-                  const Text("Rachelle"),
+                  Text("${first_name ?? ""} ${mid_name} ${last_name}"),
                 ],
               ),
               const SizedBox(
@@ -37,28 +52,32 @@ class BoxTools extends StatelessWidget {
               const Divider(
                 color: Colors.grey,
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "id Number",
-                    style: TextStyle(
-                        color: HexColor("#717171"),
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const Text("1234567890"),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Divider(
-                color: Colors.grey,
-              ),
+              if (position != null)
+                const SizedBox(
+                  height: 20,
+                ),
+              if (position != null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "position",
+                      style: TextStyle(
+                          color: HexColor("#717171"),
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(position ?? ""),
+                  ],
+                ),
+              if (position != null)
+                const SizedBox(
+                  height: 20,
+                ),
+              if (position != null)
+                const Divider(
+                  color: Colors.grey,
+                ),
               const SizedBox(
                 height: 20,
               ),
@@ -72,8 +91,8 @@ class BoxTools extends StatelessWidget {
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
                   ),
-                  const Text("rachelle.d@gmail.com",
-                      style: TextStyle(
+                  Text(email,
+                      style: const TextStyle(
                         fontSize: 14,
                       )),
                 ],
@@ -97,8 +116,8 @@ class BoxTools extends StatelessWidget {
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
                   ),
-                  const Text("416-875-7523",
-                      style: TextStyle(
+                  Text(phone,
+                      style: const TextStyle(
                         fontSize: 14,
                       )),
                 ],
@@ -116,48 +135,20 @@ class BoxTools extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "City",
+                    "location",
                     style: TextStyle(
                         color: HexColor("#717171"),
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
                   ),
-                  const Text("Dubai",
-                      style: TextStyle(
+                  Text(location,
+                      style: const TextStyle(
                         fontSize: 14,
                       )),
                 ],
               ),
               const SizedBox(
                 height: 20,
-              ),
-              const Divider(
-                color: Colors.grey,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Address",
-                    style: TextStyle(
-                        color: HexColor("#717171"),
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const Text("30-34 81 B St",
-                      style: TextStyle(
-                        fontSize: 14,
-                      )),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Divider(
-                color: Colors.grey,
               ),
             ],
           ),

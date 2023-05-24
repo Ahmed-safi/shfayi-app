@@ -11,6 +11,7 @@ import 'package:shifayiy/screens/navScreens/home.dart';
 import 'package:shifayiy/utils/colors.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import '../../StateManagment/AuthCubit/AuthCubit.dart';
+import '../../cache_helper.dart';
 
 class UserRegister extends StatefulWidget {
   const UserRegister({Key? key}) : super(key: key);
@@ -33,6 +34,8 @@ class _UserRegisterState extends State<UserRegister> {
       print(placemarks[0].locality);
       locationController.text = placemarks[0].locality.toString();
       print("======");
+    }).catchError((error) {
+      SnackBar(content: Text("${error}"));
     });
   }
 
@@ -66,6 +69,8 @@ class _UserRegisterState extends State<UserRegister> {
           ),
       body: BlocConsumer<AuthCubit, AuthStates>(listener: (context, state) {
         if (state is CreateUserSuccessState) {
+          CacheHelper.saveData(key: "isDoctor", value: false);
+
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomeMain()),
@@ -408,7 +413,7 @@ class _UserRegisterState extends State<UserRegister> {
                     },
                     controller: locationController,
                     decoration: InputDecoration(
-                        enabled: false,
+                        enabled: true,
                         disabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           // Sets border corner radius

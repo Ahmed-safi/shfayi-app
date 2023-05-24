@@ -7,9 +7,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:shifayiy/StateManagment/AuthCubit/AuthStates.dart';
 import 'package:shifayiy/screens/authScreens/login.dart';
 import 'package:shifayiy/screens/authScreens/userRegister.dart';
+import 'package:shifayiy/screens/doctor_screens/main_doctor.dart';
 import 'package:shifayiy/utils/colors.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import '../../StateManagment/AuthCubit/AuthCubit.dart';
+import '../../cache_helper.dart';
 import '../home_main.dart';
 
 class DoctorRegister extends StatefulWidget {
@@ -33,6 +35,10 @@ class _DoctorRegisterState extends State<DoctorRegister> {
       print(placemarks[0].locality);
       locationController.text = placemarks[0].locality.toString();
       print("======");
+    }).catchError((error) {
+      SnackBar(
+        content: Text(error.toString()),
+      );
     });
   }
 
@@ -69,10 +75,10 @@ class _DoctorRegisterState extends State<DoctorRegister> {
           ),
       body: BlocConsumer<AuthCubit, AuthStates>(listener: (context, state) {
         if (state is CreateUserSuccessState) {
-          print("doneeeeeeeeeee");
+          CacheHelper.saveData(key: "isDoctor", value: true);
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const HomeMain()),
+            MaterialPageRoute(builder: (context) => const MainDoctor()),
             (route) => false,
           );
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -442,7 +448,7 @@ class _DoctorRegisterState extends State<DoctorRegister> {
                     },
                     controller: locationController,
                     decoration: InputDecoration(
-                        enabled: false,
+                        enabled: true,
                         disabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           // Sets border corner radius

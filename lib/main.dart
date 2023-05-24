@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,16 +10,21 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shifayiy/StateManagment/HomeCubit/HomeCubit.dart';
 import 'package:shifayiy/firebase_options.dart';
-import 'package:shifayiy/screens/doctor_screens/home_doctor.dart';
 import 'package:shifayiy/screens/doctor_screens/main_doctor.dart';
+
 import 'package:shifayiy/screens/home_main.dart';
 import 'package:shifayiy/screens/welcom_screen.dart';
 import 'package:shifayiy/utils/colors.dart';
 
 import 'StateManagment/AuthCubit/AuthCubit.dart';
+import 'cache_helper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await CacheHelper.init();
+  bool isDoctor = CacheHelper.getData(key: "isDoctor") ?? false;
+  print(isDoctor);
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -32,11 +39,10 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthCubit()),
-        BlocProvider(create: (context) => HomeCubit()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'MY Heal',
+        title: 'شفائي',
         theme: ThemeData(
             fontFamily: "Tajawal",
             progressIndicatorTheme:
@@ -53,8 +59,8 @@ class MyApp extends StatelessWidget {
                 elevation: 0,
                 backgroundColor: HexColor("#EAE9E5")),
             scaffoldBackgroundColor: HexColor("#EAE9E5")),
-        home: FirebaseAuth.instance.currentUser == null
-            ? const MainDoctor()
+        home: FirebaseAuth.instance.currentUser != null
+            ? const Welcome()
             : AnimatedSplashScreen(
                 splash: SvgPicture.asset("assets/LogoW.svg"),
                 duration: 2000,

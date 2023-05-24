@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shifayiy/StateManagment/AuthCubit/AuthStates.dart';
+import 'package:shifayiy/cache_helper.dart';
 import 'package:shifayiy/screens/authScreens/userRegister.dart';
+import 'package:shifayiy/screens/doctor_screens/home_doctor.dart';
+import 'package:shifayiy/screens/doctor_screens/main_doctor.dart';
 import 'package:shifayiy/utils/colors.dart';
 
 import '../../StateManagment/AuthCubit/AuthCubit.dart';
@@ -27,12 +30,19 @@ class _LoginPageState extends State<LoginPage> {
           ),
       body: BlocConsumer<AuthCubit, AuthStates>(listener: (context, state) {
         if (state is LoginSuccessState) {
-          print("doneeeeeeeeeee");
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const HomeMain()),
-            (route) => false,
-          );
+          if (state.isDoctor == false) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeMain()),
+              (route) => false,
+            );
+          } else {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainDoctor()),
+              (route) => false,
+            );
+          }
         }
 
         if (state is LoginErrorState) {
