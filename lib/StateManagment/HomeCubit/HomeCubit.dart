@@ -13,6 +13,7 @@ import 'package:shifayiy/screens/navScreens/home.dart';
 import 'package:shifayiy/screens/navScreens/notification.dart';
 import 'package:shifayiy/screens/navScreens/profile.dart';
 import 'package:http/http.dart' as http;
+import 'package:toast/toast.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeStateInitialState());
@@ -42,7 +43,6 @@ class HomeCubit extends Cubit<HomeState> {
   Map<String, dynamic>? userData = {};
   void getUserData() async {
     emit(GetUserDataLoadingState());
-    print("===========55555");
     var DocotrUID = FirebaseAuth.instance.currentUser!.uid;
 
     await FirebaseFirestore.instance
@@ -57,6 +57,22 @@ class HomeCubit extends Cubit<HomeState> {
       print("===========");
     }).catchError((error) {
       emit(GetUserDataErrorState());
+    });
+  }
+
+  List<Map<String, dynamic>> categories = [];
+  void getCategories() async {
+    await FirebaseFirestore.instance
+        .collection("categories")
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        categories.add({
+          'value': element.data()["e_name"],
+          'label': element.data()["name"],
+          'icon': const Icon(Icons.medical_services),
+        });
+      });
     });
   }
 
@@ -75,7 +91,11 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  void uploadpostImage({required String text, required String dateTime}) {
+  void uploadpostImage(
+      {required String title,
+      required String text,
+      required String desease,
+      required String dateTime}) {
     emit(PostAddLoadingState());
     FirebaseStorage.instance
         .ref()
@@ -84,7 +104,12 @@ class HomeCubit extends Cubit<HomeState> {
         .then((value) {
       value.ref.getDownloadURL().then((value) {
         //emit(SocialUploadProfileImageSuccessState());
-        addPost(text: text, dateTime: dateTime, Image: value);
+        addPost(
+            title: title,
+            desease: desease,
+            text: text,
+            dateTime: dateTime,
+            Image: value);
       }).catchError((error) {
         emit(PostAddErrorsState());
       });
@@ -94,13 +119,26 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void addPost(
-      {required String text, required String dateTime, String? Image}) async {
+      {required String title,
+      required String text,
+      required String desease,
+      required String dateTime,
+      String? Image}) async {
     emit(PostAddLoadingState());
-    FirebaseFirestore.instance
-        .collection("posts")
-        .add({"text": text, "dateTime": dateTime, "image": Image ?? ''}).then(
-            (value) {
-      // ShowToast(msg: "تم اضافة البوست", color: Colors.green);
+    await FirebaseFirestore.instance.collection("posts").add({
+      "doctorUID": userData!["uId"],
+      "doctor_name":
+          "${userData!["f_name"]} ${userData!["m_name"]} ${userData!["l_name"]} ",
+      "text": text,
+      "title": title,
+      "desease": desease,
+      "dateTime": dateTime,
+      "image": Image ?? ''
+    }).then((value) {
+      const SnackBar(
+        content: Text("تم اضافة المقال"),
+        backgroundColor: Colors.green,
+      );
       getPosts();
 
       emit(PostAddSuccessState());
@@ -112,22 +150,81 @@ class HomeCubit extends Cubit<HomeState> {
     emit(RemovePostImage());
   }
 
-  List<Map> posts = [];
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> posts = [];
 
-  Future getPosts() {
+  Future getPosts() async {
+    print("data loading....");
     emit(GetPostsLoadingState());
     posts = [];
-    return FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection("posts")
         .orderBy("dateTime")
         .get()
         .then((value) {
+      print("posts here........");
+      print(value.docs);
       value.docs.forEach((element) {
-        posts.add(element.data());
+        print(element.data());
+
+        posts.add(element);
       });
       emit(GetPostsSuccessState());
     }).catchError((onError) {
       emit(GetPostsErrorState());
+    });
+  }
+
+  void addComment({
+    required String post_id,
+    required comment,
+    required comment_date,
+  }) async {
+    emit(AddCommentLoadingState());
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(post_id)
+        .collection("comments")
+        .add({
+      "comment": comment,
+      "comment_date": comment_date,
+      "user_id": userData!["uId"],
+      "user_name":
+          "${userData!["f_name"]} ${userData!["m_name"]} ${userData!["l_name"]}",
+    }).then((value) {
+      emit(addCommentCountState());
+    });
+  }
+
+  int commentCount = 0;
+  List comments = [];
+  Future getCommentsCount({
+    required String post_id,
+  }) async {
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(post_id)
+        .collection("comments")
+        .count()
+        .get()
+        .then((value) {
+      commentCount = value.count;
+      emit(GetCommentCountState());
+    });
+  }
+
+  void getComments(String post_id) async {
+    comments = [];
+    emit(GetCommentLoadingState());
+
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(post_id)
+        .collection("comments")
+        .get()
+        .then((value) {
+      comments.addAll(value.docs);
+      print(comments);
+      emit(GetCommentSuccessState());
     });
   }
 

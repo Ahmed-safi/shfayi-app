@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shifayiy/main.dart';
+import 'package:shifayiy/screens/welcom_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   _navigatetohome() async {
     await Future.delayed(const Duration(milliseconds: 1000), () {});
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => MyApp()));
+        context, MaterialPageRoute(builder: (context) => Welcome()));
   }
 
   @override

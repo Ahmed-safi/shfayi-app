@@ -29,3 +29,13 @@ class GetPostsLoadingState extends HomeState {}
 class GetPostsErrorState extends HomeState {}
 
 class GetUserState extends HomeState {}
+
+class GetCommentCountState extends HomeState {}
+
+class addCommentCountState extends HomeState {}
+
+class AddCommentLoadingState extends HomeState {}
+
+class GetCommentLoadingState extends HomeState {}
+
+class GetCommentSuccessState extends HomeState {}

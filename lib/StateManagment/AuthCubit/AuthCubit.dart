@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shifayiy/cache_helper.dart';
 import 'package:shifayiy/screens/welcom_screen.dart';
 import '../../screens/authScreens/login.dart';
 import 'AuthStates.dart';
@@ -87,11 +88,11 @@ class AuthCubit extends Cubit<AuthStates> {
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        emit(RegisterErrorState("The password provided is too weak."));
-        print('The password provided is too weak.');
+        emit(RegisterErrorState("كلمة المرور هذه ضعيفة."));
+        print('كلمة المرور هذه ضعيفة.');
       } else if (e.code == 'email-already-in-use') {
-        emit(RegisterErrorState("The account already exists for that email."));
-        print('The account already exists for that email.');
+        emit(RegisterErrorState("هناك حساب موجود بالفعل لهذا الايميل."));
+        print('هناك حساب موجود بالفعل لهذا الايميل.');
       }
     }
   }
@@ -138,6 +139,7 @@ class AuthCubit extends Cubit<AuthStates> {
             .get()
             .then((value) {
           value.data()!["isDoctor"];
+
           emit(LoginSuccessState(value.data()!["isDoctor"]));
         }).catchError((error) {
           print("=============================");
@@ -146,11 +148,11 @@ class AuthCubit extends Cubit<AuthStates> {
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        emit(LoginErrorState('No user found for that email.'));
-        print('No user found for that email.');
+        emit(LoginErrorState('لا يوجد مستخدم بهذا الايميل.'));
+        print('لا يوجد مستخدم بهذا الايميل.');
       } else if (e.code == 'wrong-password') {
-        emit(LoginErrorState('Wrong password provided for that user.'));
-        print('Wrong password provided for that user.');
+        emit(LoginErrorState('تم كتابة  كلمة مرور خاطئة لهذا المستخدم.'));
+        print('تم كتابة  كلمة مرور خاطئة لهذا المستخدم.');
       }
     }
   }

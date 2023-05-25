@@ -306,6 +306,22 @@ class _DoctorRegisterState extends State<DoctorRegister> {
                     height: 25,
                   ),
                   TextFormField(
+                    onTap: () {
+                      DatePicker.showDatePicker(
+                        context,
+                        showTitleActions: true,
+                        minTime: DateTime(1900),
+                        maxTime: DateTime.now(),
+                        onChanged: (date) {},
+                        onConfirm: (date) {
+                          setState(() {
+                            dateController.text =
+                            '${date.year}-${date.month}-${date.day}';
+                          });
+                        },
+                        currentTime: DateTime.now(),
+                      );
+                    },
                     readOnly: true,
                     textAlign: TextAlign.end,
                     style: const TextStyle(
@@ -346,7 +362,7 @@ class _DoctorRegisterState extends State<DoctorRegister> {
                               onConfirm: (date) {
                                 setState(() {
                                   dateController.text =
-                                      '${date.year}-${date.month}-${date.day}';
+                                  '${date.year}-${date.month}-${date.day}';
                                 });
                               },
                               currentTime: DateTime.now(),
@@ -447,15 +463,19 @@ class _DoctorRegisterState extends State<DoctorRegister> {
                       }
                     },
                     controller: locationController,
-                    decoration: InputDecoration(
-                        enabled: true,
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                          // Sets border corner radius
-                          borderSide: BorderSide(
-                              color: ColorManager.lightGrey,
-                              width: 2.0), // Sets border color and width
-                        ),
+                      decoration: InputDecoration(
+                          enabled: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                            // Sets border corner radius
+                            borderSide: BorderSide(
+                                color: ColorManager.primary,
+                                width: 2.0), // Sets border color and width
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                            borderSide: BorderSide(color: ColorManager.primary),
+                          ),
                         hintText: "العنوان",
                         hintStyle: const TextStyle(
                             fontFamily: "tajawal", color: Colors.grey),

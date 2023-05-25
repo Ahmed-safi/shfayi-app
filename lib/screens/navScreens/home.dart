@@ -1,99 +1,118 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shifayiy/StateManagment/HomeCubit/HomeCubit.dart';
+import 'package:shifayiy/StateManagment/HomeCubit/HomeStates.dart';
+import 'package:shifayiy/screens/articale.dart';
 import 'package:shifayiy/screens/disease_detailes.dart';
+import 'package:shifayiy/widgets/Post.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "مستجدات قد تهمك",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Container(
-              width: double.infinity,
-              height: 200,
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  "https://t3.ftcdn.net/jpg/01/35/03/62/360_F_135036205_PMNUP4K1lso6lD1o07v2qVxg6LY3Xqym.jpg",
-                ),
-              )),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Text(
-              "اصناف العناية",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Column(
-              children: [
-                InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DiseaseDetailes()));
-                    },
-                    child: const DesesWidget()),
-                SizedBox(height: 10,),
-                InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DiseaseDetailes()));
-                    },
-                    child: const DesesWidget()),
-                SizedBox(height: 10,),
-                InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DiseaseDetailes()));
-                    },
-                    child: const DesesWidget()),
-                SizedBox(height: 30,),
-              ],
-            ),
-            const Text(
-              "مقالات",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
+    return BlocConsumer<HomeCubit, HomeState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Column(
-                children: const [
-                  DoctorArticalWidget(),
-                  SizedBox(
-                    height: 15,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "مستجدات قد تهمك",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  DoctorArticalWidget(),
-                  SizedBox(
-                    height: 15,
+                  Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(
+                        "https://t3.ftcdn.net/jpg/01/35/03/62/360_F_135036205_PMNUP4K1lso6lD1o07v2qVxg6LY3Xqym.jpg",
+                      ),
+                    )),
                   ),
-                  DoctorArticalWidget(),
-                  SizedBox(
-                    height: 15,
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                    "اصناف العناية",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Column(
+                    children: [
+                      InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DiseaseDetailes()));
+                          },
+                          child: const DesesWidget()),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DiseaseDetailes()));
+                          },
+                          child: const DesesWidget()),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DiseaseDetailes()));
+                          },
+                          child: const DesesWidget()),
+                      SizedBox(
+                        height: 30,
+                      ),
+                    ],
+                  ),
+                  const Text(
+                    "مقالات",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                        children: HomeCubit.get(context)
+                            .posts
+                            .map((model) => GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Articale(
+                                            model: model,
+                                          ),
+                                        ));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: DoctorArticalWidget(model: model),
+                                  ),
+                                ))
+                            .toList()),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
+        });
   }
 }
 
@@ -108,9 +127,7 @@ class DesesWidget extends StatelessWidget {
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(15)),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-      child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
           height: 100,
           width: MediaQuery.of(context).size.width / 4,
@@ -140,8 +157,10 @@ class DesesWidget extends StatelessWidget {
 }
 
 class DoctorArticalWidget extends StatelessWidget {
+  final model;
   const DoctorArticalWidget({
     super.key,
+    this.model,
   });
 
   @override
@@ -150,8 +169,7 @@ class DoctorArticalWidget extends StatelessWidget {
       textDirection: TextDirection.ltr,
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15)),
+            color: Colors.white, borderRadius: BorderRadius.circular(15)),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
           child: Row(
@@ -171,11 +189,11 @@ class DoctorArticalWidget extends StatelessWidget {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
-                        children: const [
-                          Text("د. أحمد الخيري"),
+                        children: [
+                          Text(model["doctor_name"]),
                           Text("ahmedalkhairy@"),
                           Text(
-                            "لا تكتفي سند بدعم المريض ومرافقتهى آخر يوم في حياته بل تأخذ على عاتقهاالصحة النفسية للعائلة.",
+                            model["title"],
                             textAlign: TextAlign.end,
                           ),
                         ],

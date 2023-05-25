@@ -13,7 +13,10 @@ class HomeMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeCubit()..getUserData(),
+      create: (context) => HomeCubit()
+        ..getUserData()
+        ..getCategories()
+        ..getPosts(),
       child: BlocConsumer<HomeCubit, HomeState>(
         listener: (context, state) {},
         builder: (context, state) {
@@ -69,7 +72,7 @@ class HomeMain extends StatelessWidget {
                 ),
               )
                   /*  Text(HomeCubit.get(context)
-                      .pages[HomeCubit.get(context).currentIndex]["name"]),*/
+                        .pages[HomeCubit.get(context).currentIndex]["name"]),*/
                   ),
               body: HomeCubit.get(context)
                   .pages[HomeCubit.get(context).currentIndex]["page"],

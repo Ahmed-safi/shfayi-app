@@ -14,44 +14,9 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   var textCon = TextEditingController();
-  final List<Map<String, dynamic>> _items = [
-    {
-      'value': 'teb',
-      'label': 'الطب',
-      'icon': Icon(Icons.medical_services),
-    },
-    {
-      'value': 'tamrid',
-      'label': 'التمريض',
-      'icon': Icon(Icons.medication_outlined),
-    },
-    {
-      'value': 'It',
-      'label': 'تكنولوجيا المعلومات',
-      'icon': Icon(Icons.computer_rounded),
-    },
-    {
-      'value': 'tarbia',
-      'label': 'التربية',
-      'icon': Icon(Icons.cabin),
-    },
-    {
-      'value': 'kanonandsharia',
-      'label': 'الشريعة والقانون',
-      'icon': Icon(Icons.brightness_low_sharp),
-    },
-    {
-      'value': 'asolaldin',
-      'label': 'اصول الدين',
-      'icon': Icon(Icons.grade),
-    },
-    {
-      'value': 'sahafa',
-      'label': 'الصحافة والاعلام',
-      'icon': Icon(Icons.camera_alt),
-    },
-  ];
-  String faculity = 'all';
+  var titleCon =TextEditingController();
+
+  String desease = '';
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +26,9 @@ class _PostScreenState extends State<PostScreen> {
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
+              resizeToAvoidBottomInset: false,
                 appBar: AppBar(
-                    title: Text(
+                    title: const Text(
                       "انشاء مقالة",
                       style: TextStyle(
                         fontFamily: "Tajawal",
@@ -83,20 +49,24 @@ class _PostScreenState extends State<PostScreen> {
                             if (HomeCubit.get(context).postImage == null) {
                               HomeCubit.get(context).addPost(
                                 text: textCon.text,
+                                title: titleCon.text,
+                                desease: desease,
                                 dateTime: DateTime.now().toString(),
                               );
                               HomeCubit.get(context).send(
-                                to: faculity,
+                                to: desease,
                                 text: textCon.text,
-                                title: "مجلس الطلاب",
+                                title: "مقال جديد",
                               );
                             } else {
                               HomeCubit.get(context).send(
-                                to: faculity,
+                                to: desease,
                                 text: textCon.text,
-                                title: "مجلس الطلاب",
+                                title: "مقال جديد",
                               );
                               HomeCubit.get(context).uploadpostImage(
+                                title: titleCon.text,
+                                  desease: desease,
                                   dateTime: DateTime.now().toString(),
                                   text: textCon.text);
                             }
@@ -104,139 +74,162 @@ class _PostScreenState extends State<PostScreen> {
                         },
                       )
                     ]),
-                body: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: [
-                      if (state is PostAddLoadingState)
-                        LinearProgressIndicator(
-                          color: ColorManager.textColor,
-                          backgroundColor: ColorManager.primary,
-                        ),
-                      if (state is PostAddLoadingState)
-                        SizedBox(
-                          height: 5,
-                        ),
-                      Row(children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundImage: NetworkImage(
-                              "https://img.freepik.com/free-photo/mand-holding-cup_1258-340.jpg?size=338&ext=jpg"),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: Text(
-                            "انت",
-                            style: Theme.of(context).textTheme.bodyText1,
+                body:  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      children: [
+                        if (state is PostAddLoadingState)
+                          LinearProgressIndicator(
+                            color: ColorManager.textColor,
+                            backgroundColor: ColorManager.primary,
                           ),
-                        )
-                      ]),
-                      Expanded(
-                        child: TextFormField(
-                          controller: textCon,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "لايمكن ان يكون فارغ";
-                            }
-                          },
-                          style:
-                              TextStyle(color: Theme.of(context).canvasColor),
-                          decoration: InputDecoration(
-                              hintText: "ماذا يجول في بالك ... ",
-                              hintStyle: Theme.of(context).textTheme.caption,
-                              border: InputBorder.none),
+                        if (state is PostAddLoadingState)
+                          const SizedBox(
+                            height: 5,
+                          ),
+                        Row(children: [
+                          const CircleAvatar(
+                            radius: 30,
+                            backgroundImage: NetworkImage(
+                                "https://img.freepik.com/free-photo/mand-holding-cup_1258-340.jpg?size=338&ext=jpg"),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                            child: Text(
+                              "انت",
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                          )
+                        ]),
+          SizedBox(height: 10,),
+
+          TextFormField(
+
+          controller: titleCon,
+          validator: (value) {
+          if (value!.isEmpty) {
+          return "لايمكن ان يكون فارغ";
+          }
+          },
+          style:
+          TextStyle(color: Colors.black),
+          decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+
+            ),
+          hintText: "ادخل العنوان هنا ...",
+          hintStyle: Theme.of(context).textTheme.caption,
+          ),
+          ),
+
+                        Expanded(
+                          child: TextFormField(
+                            maxLines: 10,
+                            controller: textCon,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "لايمكن ان يكون فارغ";
+                              }
+                            },
+                            style:
+                                TextStyle(color: Colors.black),
+                            decoration: InputDecoration(
+                                hintText: "ماذا يجول في بالك ... ",
+                                hintStyle: Theme.of(context).textTheme.caption,
+                                border: InputBorder.none),
+                          ),
                         ),
-                      ),
-                      SelectFormField(
-                        type: SelectFormFieldType.dialog, // or can be dialog
-                        icon: Icon(Icons.format_shapes),
+                        SelectFormField(
+                          type: SelectFormFieldType.dialog, // or can be dialog
+                          icon: const Icon(Icons.format_shapes),
 
-                        decoration: InputDecoration(
-                            fillColor: ColorManager.textColor,
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    style: BorderStyle.solid,
-                                    color: ColorManager.textColor)),
-                            prefixIcon: Icon(Icons.arrow_drop_down),
-                            labelStyle:
-                                TextStyle(color: ColorManager.textColor),
-                            labelText: "اختر الكلية",
-                            hintText: "الكلية",
-                            hintStyle:
-                                TextStyle(color: ColorManager.textColor)),
+                          decoration: InputDecoration(
+                              fillColor: ColorManager.textColor,
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      style: BorderStyle.solid,
+                                      color: ColorManager.textColor)),
+                              prefixIcon: const Icon(Icons.arrow_drop_down),
+                              labelStyle:
+                                  TextStyle(color: ColorManager.textColor),
+                              labelText: "اختر الكلية",
+                              hintText: "الكلية",
+                              hintStyle:
+                                  TextStyle(color: ColorManager.textColor)),
 
-                        items: _items,
-                        onChanged: (val) async {
-                          faculity = val;
-                        },
+                          items: HomeCubit.get(context).categories,
+                          onChanged: (val) async {
+                            desease = val;
+                          },
 
-                        onSaved: (val) => faculity = val!,
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      if (HomeCubit.get(context).postImage != null)
-                        Stack(
-                          alignment: Alignment.topRight,
-                          children: [
-                            Container(
-                              height: 200,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4.0),
-                                image: DecorationImage(
-                                  image: FileImage(
-                                      HomeCubit.get(context).postImage!),
-                                  fit: BoxFit.contain,
+                          onSaved: (val) => desease = val!,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        if (HomeCubit.get(context).postImage != null)
+                          Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              Container(
+                                height: 200,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  image: DecorationImage(
+                                    image: FileImage(
+                                        HomeCubit.get(context).postImage!),
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: CircleAvatar(
-                                radius: 20,
-                                child: IconButton(
-                                    onPressed: () {
-                                      // CubitHome.get(context).removeImagePost();
-                                    },
-                                    icon: Icon(Icons.close)),
-                              ),
-                            )
-                          ],
-                        ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextButton(
-                                onPressed: () {
-                                  // CubitHome.get(context).getPostImage();
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.image,
-                                        color: ColorManager.primary),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "اضف صورة او فيديو",
-                                      style: TextStyle(
-                                          color: ColorManager.textColor),
-                                    )
-                                  ],
-                                )),
+                              Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: CircleAvatar(
+                                  radius: 20,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        // CubitHome.get(context).removeImagePost();
+                                      },
+                                      icon: const Icon(Icons.close)),
+                                ),
+                              )
+                            ],
                           ),
-                        ],
-                      )
-                    ],
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                  onPressed: () {
+                                    HomeCubit.get(context).getPostImage();
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.image,
+                                          color: ColorManager.primary),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "اضف صورة او فيديو",
+                                        style: TextStyle(
+                                            color: ColorManager.textColor),
+                                      )
+                                    ],
+                                  )),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                )),
+                )
           );
         });
   }

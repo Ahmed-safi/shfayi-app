@@ -15,6 +15,7 @@ import 'package:shifayiy/screens/doctor_screens/main_doctor.dart';
 import 'package:shifayiy/screens/home_main.dart';
 import 'package:shifayiy/screens/welcom_screen.dart';
 import 'package:shifayiy/utils/colors.dart';
+import 'package:toast/toast.dart';
 
 import 'StateManagment/AuthCubit/AuthCubit.dart';
 import 'cache_helper.dart';
@@ -28,17 +29,27 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MyApp(
+    isDoctor: isDoctor,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isDoctor;
+  const MyApp({super.key, required this.isDoctor});
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthCubit()),
+        BlocProvider(
+            create: (context) => HomeCubit()
+              ..init()
+              ..getUserData()
+              ..getPosts()
+              ..getCategories()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -60,7 +71,9 @@ class MyApp extends StatelessWidget {
                 backgroundColor: HexColor("#EAE9E5")),
             scaffoldBackgroundColor: HexColor("#EAE9E5")),
         home: FirebaseAuth.instance.currentUser != null
-            ? const Welcome()
+            ? isDoctor
+                ? const MainDoctor()
+                : const HomeMain()
             : AnimatedSplashScreen(
                 splash: SvgPicture.asset("assets/LogoW.svg"),
                 duration: 2000,

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shifayiy/StateManagment/AuthCubit/AuthStates.dart';
 import 'package:shifayiy/cache_helper.dart';
+import 'package:shifayiy/screens/authScreens/forgetPass.dart';
 import 'package:shifayiy/screens/authScreens/userRegister.dart';
 import 'package:shifayiy/screens/doctor_screens/home_doctor.dart';
 import 'package:shifayiy/screens/doctor_screens/main_doctor.dart';
@@ -31,12 +32,15 @@ class _LoginPageState extends State<LoginPage> {
       body: BlocConsumer<AuthCubit, AuthStates>(listener: (context, state) {
         if (state is LoginSuccessState) {
           if (state.isDoctor == false) {
+            CacheHelper.saveData(key: "isDoctor", value: false);
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const HomeMain()),
               (route) => false,
             );
           } else {
+            CacheHelper.saveData(key: "isDoctor", value: true);
+
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const MainDoctor()),
@@ -84,9 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                             "تسجيل الدخول",
                             textAlign: TextAlign.end,
                             style: TextStyle(
-                                fontFamily: "tajawal",
-                                fontWeight: FontWeight.bold,
-                                fontSize: 26),
+                                fontWeight: FontWeight.bold, fontSize: 26),
                           ),
                         ),
                         Align(
@@ -94,10 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             "قم بتسجيل الدخول",
                             textAlign: TextAlign.end,
-                            style: TextStyle(
-                                fontFamily: "tajawal",
-                                color: Colors.grey,
-                                fontSize: 14),
+                            style: TextStyle(color: Colors.grey, fontSize: 14),
                           ),
                         ),
                       ],
@@ -108,15 +107,14 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextFormField(
                     textAlign: TextAlign.end,
-                    style: const TextStyle(
-                        fontFamily: "tajawal", color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                     keyboardType: TextInputType.emailAddress,
                     validator: (String? value) {
                       if (value!.isEmpty) {
                         return "حقل مطلوب";
                       }
-                      if (value.length < 8) {
-                        return "لابد ان يكون اكبر من 8 احرف";
+                      if (value.length < 7) {
+                        return "لابد ان يكون اكبر من 7 احرف";
                       }
                     },
                     controller: emailController,
@@ -134,8 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         filled: false,
                         hintText: "البريد الالكتروني",
-                        hintStyle: TextStyle(
-                            fontFamily: "tajawal", color: Colors.grey),
+                        hintStyle: TextStyle(color: Colors.grey),
                         suffixIcon: Icon(
                           Icons.email,
                           color: Colors.black,
@@ -148,15 +145,14 @@ class _LoginPageState extends State<LoginPage> {
                     textAlign: TextAlign.end,
                     obscureText:
                         AuthCubit.get(context).isVisible ? true : false,
-                    style: const TextStyle(
-                        fontFamily: "tajawal", color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                     keyboardType: TextInputType.visiblePassword,
                     validator: (String? value) {
                       if (value!.isEmpty) {
                         return "حقل مطلوب";
                       }
-                      if (value.length < 8) {
-                        return "كلمة المرور اقل من 8 احرف";
+                      if (value.length < 7) {
+                        return "كلمة المرور اقل من 7 احرف";
                       }
                     },
                     controller: passwordController,
@@ -174,8 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         filled: false,
                         hintText: "كلمة المرور",
-                        hintStyle: const TextStyle(
-                            fontFamily: "tajawal", color: Colors.grey),
+                        hintStyle: const TextStyle(color: Colors.grey),
                         suffixIcon: const Icon(Icons.lock),
                         prefixIcon: IconButton(
                           onPressed: () {
@@ -207,11 +202,10 @@ class _LoginPageState extends State<LoginPage> {
                                 color: ColorManager.primary,
                                 borderRadius: const BorderRadius.all(
                                     Radius.circular(50))),
-                            child: Center(
+                            child: const Center(
                                 child: Text(
                               "تسجيل الدخول",
                               style: TextStyle(
-                                  fontFamily: "tajawal",
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
@@ -231,17 +225,31 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text(
                           "انشى حساب",
                           style: TextStyle(
-                              fontFamily: "tajawal",
                               color: ColorManager.primary,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
                       const Text(
                         "ليس لديك حساب؟",
-                        style: TextStyle(
-                            fontFamily: "tajawal", color: Colors.black),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
+                  ),
+
+                  Divider(endIndent: 10, indent: 10),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => ForgetPass())));
+                    },
+                    child: Text(
+                      "هل نسيت كلمة المرور ؟",
+                      style: TextStyle(
+                          color: ColorManager.primary,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
