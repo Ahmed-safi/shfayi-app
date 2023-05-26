@@ -26,15 +26,19 @@ class Articale extends StatelessWidget {
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
-            "deases Name",
+            "تفاصيل المقال",
             style: TextStyle(
-                color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: "Tajawal"),
           ),
         ),
         body: BlocConsumer<HomeCubit, HomeState>(
           listener: (context, state) {},
           builder: (context, state) => SingleChildScrollView(
               child: Post(
+            doctor_id: model.data()["doctorUID"],
             postId: model.id,
             editble: false,
             date: model.data()["dateTime"],

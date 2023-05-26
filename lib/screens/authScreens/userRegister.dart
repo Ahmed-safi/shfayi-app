@@ -70,7 +70,7 @@ class _UserRegisterState extends State<UserRegister> {
       body: BlocConsumer<AuthCubit, AuthStates>(listener: (context, state) {
         if (state is CreateUserSuccessState) {
           CacheHelper.saveData(key: "isDoctor", value: false);
-
+          AuthCubit.get(context).getUserData();
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomeMain()),
@@ -414,12 +414,16 @@ class _UserRegisterState extends State<UserRegister> {
                     controller: locationController,
                     decoration: InputDecoration(
                         enabled: true,
-                        disabledBorder: OutlineInputBorder(
+                        border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15.0),
                           // Sets border corner radius
                           borderSide: BorderSide(
-                              color: ColorManager.lightGrey,
+                              color: ColorManager.primary,
                               width: 2.0), // Sets border color and width
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(color: ColorManager.primary),
                         ),
                         hintText: "العنوان",
                         hintStyle: const TextStyle(

@@ -68,7 +68,7 @@ class Profile extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent),
                         child: const Text(
-                          "LOGOUT",
+                          "تسجيل الخروج",
                           style: TextStyle(color: Colors.white),
                         )),
                   ),

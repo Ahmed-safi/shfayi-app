@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shifayiy/StateManagment/HomeCubit/HomeCubit.dart';
@@ -7,6 +6,7 @@ import 'package:shifayiy/StateManagment/HomeCubit/HomeStates.dart';
 import 'package:shifayiy/screens/navScreens/home.dart';
 
 class Post extends StatefulWidget {
+  final String doctor_id;
   final bool editble;
   final String title;
   final String text;
@@ -22,7 +22,8 @@ class Post extends StatefulWidget {
       required this.doctor_name,
       required this.date,
       required this.editble,
-      required this.postId});
+      required this.postId,
+      required this.doctor_id});
 
   @override
   State<Post> createState() => _PostState();
@@ -31,9 +32,87 @@ class Post extends StatefulWidget {
 class _PostState extends State<Post> {
   @override
   var cont = TextEditingController();
+  bool liked = false;
+  void checkLike() {
+    print("121321321321323231321");
+    likes.forEach((element) {
+      print("________________________________");
+      print(element.data()["user_id"]);
+      print(HomeCubit.get(context).userData!["uId"]);
+
+      if (element.data()["user_id"] ==
+          HomeCubit.get(context).userData!["uId"]) {
+        liked = true;
+        print("---------------------------------");
+        print(liked);
+        print("---------------------------------");
+      } else {
+        liked = false;
+      }
+    });
+  }
+
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> comments = [];
+  void getComments() async {
+    comments = [];
+
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(widget.postId)
+        .collection("comments")
+        .get()
+        .then((value) {
+      comments.addAll(value.docs);
+      print(comments);
+      setState(() {});
+    });
+  }
+
+  List likes = [];
+  void getLikes() async {
+    likes = [];
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(widget.postId)
+        .collection("likes")
+        .get()
+        .then((value) {
+      likes.addAll(value.docs);
+      print(likes);
+      checkLike();
+      setState(() {});
+    });
+  }
+
+  void removeLike() async {
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(widget.postId)
+        .collection("likes")
+        .where("user_id",
+            isEqualTo: HomeCubit.get(context).userData!["user_id"])
+        .get()
+        .then((value) {
+      value.docs.forEach((element) async {
+        await FirebaseFirestore.instance
+            .collection("posts")
+            .doc(widget.postId)
+            .collection("likes")
+            .doc(element.id)
+            .delete()
+            .then((value) {
+          liked = false;
+          getLikes();
+          setState(() {});
+        });
+      });
+    });
+  }
+
   void initState() {
-    HomeCubit.get(context).getCommentsCount(post_id: widget.postId);
-    HomeCubit.get(context).getComments(widget.postId);
+    getComments();
+    getLikes();
+    checkLike();
 
     super.initState();
   }
@@ -89,15 +168,18 @@ class _PostState extends State<Post> {
                   const SizedBox(
                     height: 15,
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.grey),
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height / 3,
-                    child: Image.network(
-                      widget.image,
-                      fit: BoxFit.cover,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.grey),
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height / 3,
+                      child: Image.network(
+                        widget.image,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -123,16 +205,12 @@ class _PostState extends State<Post> {
                                     textDirection: TextDirection.rtl,
                                     child: Container(
                                       width: double.infinity,
-                                      child: HomeCubit.get(context)
-                                              .comments
-                                              .isEmpty
+                                      child: comments.isEmpty
                                           ? const Center(
                                               child: Text("لا يوجد تعليقات"),
                                             )
                                           : ListView.separated(
-                                              itemCount: HomeCubit.get(context)
-                                                  .comments
-                                                  .length,
+                                              itemCount: comments.length,
                                               separatorBuilder:
                                                   (context, index) =>
                                                       const SizedBox(
@@ -164,11 +242,10 @@ class _PostState extends State<Post> {
                                                             ),
                                                             Column(
                                                               children: [
-                                                                Text(HomeCubit.get(
-                                                                        context)
-                                                                    .comments[
-                                                                        index]
-                                                                    .data()["user_name"]),
+                                                                Text(comments[
+                                                                            index]
+                                                                        .data()[
+                                                                    "user_name"]),
                                                               ],
                                                             ),
                                                           ],
@@ -178,13 +255,13 @@ class _PostState extends State<Post> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                      .only(
                                                                   right: 50),
                                                           child: Text(
-                                                            HomeCubit.get(
-                                                                    context)
-                                                                .comments[index]
-                                                                .data()["comment"],
+                                                            comments[index]
+                                                                    .data()[
+                                                                "comment"],
                                                           ),
                                                         )
                                                       ],
@@ -196,11 +273,11 @@ class _PostState extends State<Post> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Icon(Icons.comment),
+                            const Icon(Icons.mode_comment),
                             const SizedBox(
                               width: 5,
                             ),
-                            Text("${HomeCubit.get(context).comments.length}"),
+                            Text("${comments.length}"),
                           ],
                         ),
                       ),
@@ -210,12 +287,31 @@ class _PostState extends State<Post> {
                           icon: const Icon(Icons.edit_note_outlined),
                         ),
                       Row(
-                        children: const [
-                          Icon(Icons.favorite_border),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text("20"),
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                if (liked) {
+                                  removeLike();
+                                } else {
+                                  HomeCubit.get(context).addLike(
+                                      post_id: widget.postId,
+                                      like_date: DateTime.now());
+                                  HomeCubit.get(context).send(
+                                      to: widget.doctor_id,
+                                      title: "لايك جديد",
+                                      text: "تم الاعجاب بمقالك");
+                                  getLikes();
+                                }
+                              },
+                              icon: Row(
+                                children: [
+                                  Icon(
+                                    Icons.favorite_border,
+                                    color: liked ? Colors.red : Colors.black,
+                                  ),
+                                  Text("${likes.length}"),
+                                ],
+                              )),
                         ],
                       )
                     ],
@@ -234,8 +330,12 @@ class _PostState extends State<Post> {
                               comment: value,
                               comment_date: DateTime.now(),
                             );
+                            HomeCubit.get(context).send(
+                                to: widget.doctor_id,
+                                title: "تعليق جديد",
+                                text: "تم التعليق على بمقالك");
                             cont.clear();
-                            HomeCubit.get(context).getComments(widget.postId);
+                            getComments();
                           },
                           keyboardType: TextInputType.text,
                           maxLines: 5,

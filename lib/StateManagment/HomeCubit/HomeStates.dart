@@ -39,3 +39,9 @@ class AddCommentLoadingState extends HomeState {}
 class GetCommentLoadingState extends HomeState {}
 
 class GetCommentSuccessState extends HomeState {}
+
+class addLikeState extends HomeState {}
+
+class subscripeSuccess extends HomeState {}
+
+class GetsubscripesSuccess extends HomeState {}

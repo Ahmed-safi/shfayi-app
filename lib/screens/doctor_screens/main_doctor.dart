@@ -50,7 +50,7 @@ class MainDoctor extends StatelessWidget {
                   BottomNavigationBarItem(
                       icon: Icon(Icons.home), label: "الصفحة الرئيسية"),
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.notifications), label: "الاشعارات"),
+                      icon: Icon(Icons.person), label: "المستخدمين"),
                   BottomNavigationBarItem(
                       icon: Icon(Icons.person), label: "الملف الشخصي"),
                 ],

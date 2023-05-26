@@ -26,16 +26,19 @@ class Home extends StatelessWidget {
                     "مستجدات قد تهمك",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Container(
-                    width: double.infinity,
-                    height: 200,
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                        "https://t3.ftcdn.net/jpg/01/35/03/62/360_F_135036205_PMNUP4K1lso6lD1o07v2qVxg6LY3Xqym.jpg",
-                      ),
-                    )),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 200,
+                      decoration: const BoxDecoration(
+                          image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(
+                          "https://mrkzgulfup.com/uploads/168511089290641.png",
+                        ),
+                      )),
+                    ),
                   ),
                   const SizedBox(
                     height: 10,
@@ -45,42 +48,25 @@ class Home extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Column(
-                    children: [
-                      InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DiseaseDetailes()));
-                          },
-                          child: const DesesWidget()),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DiseaseDetailes()));
-                          },
-                          child: const DesesWidget()),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DiseaseDetailes()));
-                          },
-                          child: const DesesWidget()),
-                      SizedBox(
-                        height: 30,
-                      ),
-                    ],
-                  ),
+                      children: HomeCubit.get(context)
+                          .categories_home
+                          .map(
+                            (e) => InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DiseaseDetailes(
+                                                model: e,
+                                              )));
+                                },
+                                child: DesesWidget(
+                                  name: e.data()["name"],
+                                  e_name: e.data()["e_name"],
+                                  about: e.data()["about"],
+                                )),
+                          )
+                          .toList()),
                   const Text(
                     "مقالات",
                     style: TextStyle(fontWeight: FontWeight.bold),
@@ -117,8 +103,15 @@ class Home extends StatelessWidget {
 }
 
 class DesesWidget extends StatelessWidget {
+  final name;
+  final e_name;
+  final about;
+
   const DesesWidget({
     super.key,
+    required this.name,
+    required this.e_name,
+    required this.about,
   });
 
   @override
@@ -128,12 +121,15 @@ class DesesWidget extends StatelessWidget {
           color: Colors.white, borderRadius: BorderRadius.circular(15)),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-          height: 100,
-          width: MediaQuery.of(context).size.width / 4,
-          child: Image.network(
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJoOzhvi9mdSU4S4eQDwjcuwGfUIafma3Q5q25Df4&s",
-            fit: BoxFit.cover,
+        ClipRRect(
+          borderRadius: BorderRadius.circular(15.0),
+          child: Container(
+            height: 100,
+            width: MediaQuery.of(context).size.width / 4,
+            child: Image.network(
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJoOzhvi9mdSU4S4eQDwjcuwGfUIafma3Q5q25Df4&s",
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         const SizedBox(
@@ -142,11 +138,11 @@ class DesesWidget extends StatelessWidget {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text("مرض السكري "),
-              Text("patient"),
+            children: [
+              Text(name),
+              Text(e_name),
               Text(
-                "أمراض القلب مصطلح واسع يُستخدم لوصف مجموعة من الأمراض التي تؤثر في القلب، وتشمل الأمراض المختلفة التي تندرج تحت مظلة أمراض القلب",
+                about,
               ),
             ],
           ),

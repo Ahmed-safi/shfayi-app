@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shifayiy/cache_helper.dart';
@@ -53,7 +54,26 @@ class AuthCubit extends Cubit<AuthStates> {
   }
 
   */
-  var userData = [];
+  Map<String, dynamic>? userData = {};
+  void getUserData() async {
+    emit(GetUserDataLoadingState());
+    var DocotrUID = FirebaseAuth.instance.currentUser!.uid;
+
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(DocotrUID)
+        .get()
+        .then((value) {
+      userData = value.data();
+
+      emit(GetUserDataSuccessState());
+
+      print(userData);
+      print("===========");
+    }).catchError((error) {
+      emit(GetUserDataErrorState());
+    });
+  }
 
   void userRegister(
       {required String email,
@@ -73,7 +93,7 @@ class AuthCubit extends Cubit<AuthStates> {
         email: email,
         password: password,
       )
-          .then((value) {
+          .then((value) async {
         userCreate(
             email: email,
             m_name: m_name,
@@ -85,6 +105,8 @@ class AuthCubit extends Cubit<AuthStates> {
             uId: value.user!.uid,
             isDoctor: isDoctor,
             position: position);
+
+        await FirebaseMessaging.instance.subscribeToTopic(value.user!.uid);
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -155,6 +177,22 @@ class AuthCubit extends Cubit<AuthStates> {
         print('تم كتابة  كلمة مرور خاطئة لهذا المستخدم.');
       }
     }
+  }
+
+  List<Map<String, dynamic>> categories = [];
+  void getCategories() async {
+    await FirebaseFirestore.instance
+        .collection("categories")
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        categories.add({
+          'value': element.data()["e_name"],
+          'label': element.data()["name"],
+          'icon': const Icon(Icons.medical_services),
+        });
+      });
+    });
   }
 
   void logout(context) async {

@@ -9,8 +9,8 @@ import 'package:shifayiy/StateManagment/HomeCubit/HomeStates.dart';
 import 'package:shifayiy/screens/chat.dart';
 import 'package:shifayiy/utils/colors.dart';
 
-class Doctors extends StatelessWidget {
-  const Doctors({super.key});
+class Users extends StatelessWidget {
+  const Users({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class Doctors extends StatelessWidget {
                     ),
                     Expanded(
                       child: ListView.separated(
-                          itemCount: HomeCubit.get(context).doctors.length,
+                          itemCount: HomeCubit.get(context).users.length,
                           separatorBuilder: (context, index) => SizedBox(
                                 height: 15,
                               ),
@@ -57,10 +57,11 @@ class Doctors extends StatelessWidget {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) => Chat(
-                                                          userData: HomeCubit
-                                                                  .get(context)
-                                                              .doctors[index]
-                                                              .data(),
+                                                          userData:
+                                                              HomeCubit.get(
+                                                                      context)
+                                                                  .users[index]
+                                                                  .data(),
                                                         )));
                                           },
                                           child: Text(
@@ -78,13 +79,9 @@ class Doctors extends StatelessWidget {
                                             width: 100,
                                             child: FittedBox(
                                                 child: Text(
-                                              "${HomeCubit.get(context).doctors[index].data()["f_name"]} ${HomeCubit.get(context).doctors[index].data()["m_name"]} ${HomeCubit.get(context).doctors[index].data()["l_name"]}",
+                                              "${HomeCubit.get(context).users[index].data()["f_name"]} ${HomeCubit.get(context).users[index].data()["m_name"]} ${HomeCubit.get(context).users[index].data()["l_name"]}",
                                               style: TextStyle(fontSize: 20),
                                             ))),
-                                        Text(HomeCubit.get(context)
-                                                .doctors[index]
-                                                .data()["position"] ??
-                                            "null"),
                                       ],
                                     ),
                                     SizedBox(

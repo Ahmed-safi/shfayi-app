@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:shifayiy/utils/colors.dart';
 
 class BoxTools extends StatelessWidget {
   final first_name;
@@ -37,9 +38,9 @@ class BoxTools extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Name",
+                    "الاسم",
                     style: TextStyle(
-                        color: HexColor("#717171"),
+                        color: ColorManager.textColor,
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
                   ),
@@ -61,9 +62,9 @@ class BoxTools extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "position",
+                      "التخصص",
                       style: TextStyle(
-                          color: HexColor("#717171"),
+                          color: ColorManager.textColor,
                           fontSize: 14,
                           fontWeight: FontWeight.bold),
                     ),
@@ -85,9 +86,9 @@ class BoxTools extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Email Address",
+                    "البريد الالكتروني",
                     style: TextStyle(
-                        color: HexColor("#717171"),
+                        color: ColorManager.textColor,
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
                   ),
@@ -110,9 +111,9 @@ class BoxTools extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Phone",
+                    "رقم الجوال",
                     style: TextStyle(
-                        color: HexColor("#717171"),
+                        color: ColorManager.textColor,
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
                   ),
@@ -135,9 +136,9 @@ class BoxTools extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "location",
+                    "الموقع",
                     style: TextStyle(
-                        color: HexColor("#717171"),
+                        color: ColorManager.textColor,
                         fontSize: 14,
                         fontWeight: FontWeight.bold),
                   ),

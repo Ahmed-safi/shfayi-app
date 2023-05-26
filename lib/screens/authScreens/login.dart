@@ -31,6 +31,8 @@ class _LoginPageState extends State<LoginPage> {
           ),
       body: BlocConsumer<AuthCubit, AuthStates>(listener: (context, state) {
         if (state is LoginSuccessState) {
+          AuthCubit.get(context).getUserData();
+
           if (state.isDoctor == false) {
             CacheHelper.saveData(key: "isDoctor", value: false);
             Navigator.pushAndRemoveUntil(

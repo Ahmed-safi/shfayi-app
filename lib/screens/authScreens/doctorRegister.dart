@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:select_form_field/select_form_field.dart';
 import 'package:shifayiy/StateManagment/AuthCubit/AuthStates.dart';
 import 'package:shifayiy/screens/authScreens/login.dart';
 import 'package:shifayiy/screens/authScreens/userRegister.dart';
@@ -11,6 +12,7 @@ import 'package:shifayiy/screens/doctor_screens/main_doctor.dart';
 import 'package:shifayiy/utils/colors.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import '../../StateManagment/AuthCubit/AuthCubit.dart';
+import '../../StateManagment/HomeCubit/HomeCubit.dart';
 import '../../cache_helper.dart';
 import '../home_main.dart';
 
@@ -59,7 +61,6 @@ class _DoctorRegisterState extends State<DoctorRegister> {
   final fNameController = TextEditingController();
   final mNameController = TextEditingController();
   final lNameController = TextEditingController();
-  final positionController = TextEditingController();
 
   final dateController = TextEditingController();
   final emailController = TextEditingController();
@@ -67,6 +68,7 @@ class _DoctorRegisterState extends State<DoctorRegister> {
   final locationController = TextEditingController();
   final passwordController = TextEditingController();
   final cpasswordController = TextEditingController();
+  String desease = '';
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -269,37 +271,30 @@ class _DoctorRegisterState extends State<DoctorRegister> {
                   const SizedBox(
                     height: 25,
                   ),
-                  TextFormField(
-                    textAlign: TextAlign.end,
-                    style: const TextStyle(
-                        fontFamily: "tajawal", color: Colors.black),
-                    keyboardType: TextInputType.name,
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return "حقل مطلوب";
-                      }
-                    },
-                    controller: positionController,
+                  SelectFormField(
+                    type: SelectFormFieldType.dropdown, // or can be dialog
+                    icon: const Icon(Icons.format_shapes),
+
                     decoration: InputDecoration(
+                        fillColor: ColorManager.textColor,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                          // Sets border corner radius
-                          borderSide: BorderSide(
-                              color: ColorManager.primary,
-                              width: 2.0), // Sets border color and width
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                          borderSide: BorderSide(color: ColorManager.primary),
-                        ),
-                        filled: false,
-                        hintText: "التخصص",
-                        hintStyle: const TextStyle(
-                            fontFamily: "tajawal", color: Colors.grey),
-                        suffixIcon: const Icon(
-                          Icons.person,
-                          color: Colors.black,
-                        )),
+                            borderSide: BorderSide(
+                                style: BorderStyle.solid,
+                                color: ColorManager.textColor)),
+                        prefixIcon: const Icon(Icons.arrow_drop_down),
+                        labelStyle: TextStyle(color: ColorManager.textColor),
+                        hintText: "اخترالتخصص",
+                        hintStyle: TextStyle(color: ColorManager.textColor)),
+
+                    items: AuthCubit.get(context).categories,
+                    onChanged: (val) async {
+                      desease = val;
+                    },
+
+                    onSaved: (val) => desease = val!,
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   //----------
                   const SizedBox(
@@ -316,7 +311,7 @@ class _DoctorRegisterState extends State<DoctorRegister> {
                         onConfirm: (date) {
                           setState(() {
                             dateController.text =
-                            '${date.year}-${date.month}-${date.day}';
+                                '${date.year}-${date.month}-${date.day}';
                           });
                         },
                         currentTime: DateTime.now(),
@@ -362,7 +357,7 @@ class _DoctorRegisterState extends State<DoctorRegister> {
                               onConfirm: (date) {
                                 setState(() {
                                   dateController.text =
-                                  '${date.year}-${date.month}-${date.day}';
+                                      '${date.year}-${date.month}-${date.day}';
                                 });
                               },
                               currentTime: DateTime.now(),
@@ -463,19 +458,19 @@ class _DoctorRegisterState extends State<DoctorRegister> {
                       }
                     },
                     controller: locationController,
-                      decoration: InputDecoration(
-                          enabled: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            // Sets border corner radius
-                            borderSide: BorderSide(
-                                color: ColorManager.primary,
-                                width: 2.0), // Sets border color and width
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                            borderSide: BorderSide(color: ColorManager.primary),
-                          ),
+                    decoration: InputDecoration(
+                        enabled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          // Sets border corner radius
+                          borderSide: BorderSide(
+                              color: ColorManager.primary,
+                              width: 2.0), // Sets border color and width
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          borderSide: BorderSide(color: ColorManager.primary),
+                        ),
                         hintText: "العنوان",
                         hintStyle: const TextStyle(
                             fontFamily: "tajawal", color: Colors.grey),
@@ -586,19 +581,27 @@ class _DoctorRegisterState extends State<DoctorRegister> {
                       ? const CircularProgressIndicator()
                       : InkWell(
                           onTap: () {
-                            _formKey.currentState!.save();
-                            if (_formKey.currentState!.validate()) {
-                              AuthCubit.get(context).userRegister(
-                                  f_name: fNameController.text,
-                                  m_name: mNameController.text,
-                                  l_name: lNameController.text,
-                                  dob: dateController.text,
-                                  phone: phoneController.text,
-                                  location: locationController.text,
-                                  email: emailController.text,
-                                  position: positionController.text,
-                                  isDoctor: true,
-                                  password: passwordController.text);
+                            if (desease.isNotEmpty) {
+                              _formKey.currentState!.save();
+                              if (_formKey.currentState!.validate()) {
+                                AuthCubit.get(context).userRegister(
+                                    f_name: fNameController.text,
+                                    m_name: mNameController.text,
+                                    l_name: lNameController.text,
+                                    dob: dateController.text,
+                                    phone: phoneController.text,
+                                    location: locationController.text,
+                                    email: emailController.text,
+                                    position: desease,
+                                    isDoctor: true,
+                                    password: passwordController.text);
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text("قم بادخال التخصص"),
+                                backgroundColor: Colors.red,
+                              ));
                             }
                           },
                           child: Container(
@@ -609,7 +612,7 @@ class _DoctorRegisterState extends State<DoctorRegister> {
                                     Radius.circular(50))),
                             child: const Center(
                                 child: Text(
-                              "تسجيل الدخول",
+                              "التسجيل",
                               style: TextStyle(
                                   fontFamily: "tajawal",
                                   color: Colors.white,

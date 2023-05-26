@@ -43,13 +43,15 @@ class MyApp extends StatelessWidget {
     ToastContext().init(context);
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthCubit()),
+        BlocProvider(create: (context) => AuthCubit()..getCategories()),
         BlocProvider(
             create: (context) => HomeCubit()
               ..init()
               ..getUserData()
               ..getPosts()
-              ..getCategories()),
+              ..getCategories()
+              ..getDoctors()
+              ..getUsers()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

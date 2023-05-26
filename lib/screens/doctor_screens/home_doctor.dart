@@ -23,6 +23,8 @@ class HomeDoctor extends StatelessWidget {
               height: 20,
             ),
             itemBuilder: (context, index) => Post(
+              doctor_id:
+                  HomeCubit.get(context).posts[index].data()["doctorUID"],
               postId: HomeCubit.get(context).posts[index].id,
               editble: true,
               date: HomeCubit.get(context).posts[index].data()["dateTime"],

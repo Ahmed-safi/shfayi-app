@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shifayiy/StateManagment/HomeCubit/HomeStates.dart';
+import 'package:shifayiy/cache_helper.dart';
 import 'package:shifayiy/screens/doctor_screens/home_doctor.dart';
 import 'package:shifayiy/screens/navScreens/doctors.dart';
 import 'package:shifayiy/screens/navScreens/home.dart';
@@ -14,6 +15,8 @@ import 'package:shifayiy/screens/navScreens/notification.dart';
 import 'package:shifayiy/screens/navScreens/profile.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
+
+import '../../screens/doctor_screens/users.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeStateInitialState());
@@ -26,18 +29,45 @@ class HomeCubit extends Cubit<HomeState> {
   int currentIndex = 0;
   List pages = [
     {"page": const Home(), "name": "Home"},
-    {"page": const Notifications(), "name": "Notifications"},
     {"page": const Doctors(), "name": "Doctors"},
     {"page": const Profile(), "name": "Profile"},
   ];
   List pages_doctors = [
     {"page": const HomeDoctor(), "name": "Home"},
-    {"page": const Notifications(), "name": "Notifications"},
+    {"page": const Users(), "name": "Users"},
     {"page": const Profile(), "name": "Profile"},
   ];
   void changeNavBar(int index) {
     currentIndex = index;
     emit(HomeNavigationState());
+  }
+
+  List users = [];
+  void getUsers() async {
+    print(211321313);
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("isDoctor", isEqualTo: false)
+        .get()
+        .then((value) {
+      users.addAll(value.docs);
+      print("doctorsssssssssssssssssssssssssssssssssssssssssssss");
+      print(value.docs);
+    });
+  }
+
+  List doctors = [];
+  void getDoctors() async {
+    print(211321313);
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("isDoctor", isEqualTo: true)
+        .get()
+        .then((value) {
+      doctors.addAll(value.docs);
+      print("doctorsssssssssssssssssssssssssssssssssssssssssssss");
+      print(value.docs);
+    });
   }
 
   Map<String, dynamic>? userData = {};
@@ -51,6 +81,8 @@ class HomeCubit extends Cubit<HomeState> {
         .get()
         .then((value) {
       userData = value.data();
+
+      getSubscripes();
       emit(GetUserDataSuccessState());
 
       print(userData);
@@ -61,11 +93,14 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   List<Map<String, dynamic>> categories = [];
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> categories_home = [];
+
   void getCategories() async {
     await FirebaseFirestore.instance
         .collection("categories")
         .get()
         .then((value) {
+      categories_home.addAll(value.docs);
       value.docs.forEach((element) {
         categories.add({
           'value': element.data()["e_name"],
@@ -118,6 +153,33 @@ class HomeCubit extends Cubit<HomeState> {
     });
   }
 
+  void subscripe({required desease}) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(userData!["uId"])
+        .collection("subs")
+        .add({"desease": desease}).then((value) {
+      emit(subscripeSuccess());
+    });
+  }
+
+  List subscripes = [];
+  void getSubscripes() async {
+    print("..................................");
+    print(userData!["uId"]);
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(userData!["uId"])
+        .collection("subs")
+        .get()
+        .then((value) {
+      subscripes.addAll(value.docs);
+      print("////////////////");
+      print(subscripes);
+      emit(GetsubscripesSuccess());
+    });
+  }
+
   void addPost(
       {required String title,
       required String text,
@@ -139,6 +201,7 @@ class HomeCubit extends Cubit<HomeState> {
         content: Text("تم اضافة المقال"),
         backgroundColor: Colors.green,
       );
+      send(to: desease, title: title, text: "تم اضافة مقال جديد");
       getPosts();
 
       emit(PostAddSuccessState());
@@ -195,6 +258,24 @@ class HomeCubit extends Cubit<HomeState> {
     });
   }
 
+  void addLike({
+    required String post_id,
+    required like_date,
+  }) async {
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .doc(post_id)
+        .collection("likes")
+        .add({
+      "like_date": like_date,
+      "user_id": userData!["uId"],
+      "user_name":
+          "${userData!["f_name"]} ${userData!["m_name"]} ${userData!["l_name"]}",
+    }).then((value) {
+      emit(addLikeState());
+    });
+  }
+
   int commentCount = 0;
   List comments = [];
   Future getCommentsCount({
@@ -212,29 +293,13 @@ class HomeCubit extends Cubit<HomeState> {
     });
   }
 
-  void getComments(String post_id) async {
-    comments = [];
-    emit(GetCommentLoadingState());
-
-    await FirebaseFirestore.instance
-        .collection("posts")
-        .doc(post_id)
-        .collection("comments")
-        .get()
-        .then((value) {
-      comments.addAll(value.docs);
-      print(comments);
-      emit(GetCommentSuccessState());
-    });
-  }
-
-  send({String to = "all", String? title, String? text}) async {
+  void send({String to = "all", String? title, String? text}) async {
     await http.post(
       Uri.parse('https://fcm.googleapis.com/fcm/send'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization':
-            'key=AAAAX3xyBcE:APA91bEvEozUyCVYW2mLkB7FkC6l-VfHXCJcTcpDdl7Aiyly1_3b8tmrLqc_yLA2eVzRk8_jQfAIY-qd2P3In62Tqu6KsS12nbgq1J8gkUbzRu48jaPnSNCZIoijOQbZJAWYjYVhjOBm',
+            'key=BOUYwvemjAMoP42iplXc7WpUo-uOD2IsGZ3QR3C6W0a9kab4Wt3bb1qFVIoYpFbNfLb71i9Qan68t2RZL7rtlzI',
       },
       body: jsonEncode(
         <String, dynamic>{
